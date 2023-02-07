@@ -73,8 +73,8 @@ void AchievementsMenu_Main(void *objPtr)
             break;
         }
         case 1: {
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
             SetRenderMatrix(&self->renderMatrix);
 
             if (usePhysicalControls) {
@@ -82,12 +82,12 @@ void AchievementsMenu_Main(void *objPtr)
                     usePhysicalControls = false;
                 }
                 else {
-                    if (keyPress.up) {
+                    if (inputPress.up) {
                     }
-                    else if (keyPress.down) {
+                    else if (inputPress.down) {
                     }
 
-                    if (keyPress.B) {
+                    if (inputPress.B) {
                         PlaySfxByName("Menu Back", false);
                         self->backPressed = false;
                         self->state       = ABOUT_STATE_EXIT;
@@ -99,17 +99,17 @@ void AchievementsMenu_Main(void *objPtr)
                     self->backPressed = CheckTouchRect(128.0, -92.0, 32.0, 32.0) >= 0;
                 }
                 else {
-                    if (keyPress.B || self->backPressed) {
+                    if (inputPress.B || self->backPressed) {
                         PlaySfxByName("Menu Back", false);
                         self->backPressed = false;
                         self->state       = ABOUT_STATE_EXIT;
                     }
                     else {
                         if (self->state == ABOUT_STATE_MAIN) {
-                            if (keyDown.up) {
+                            if (inputDown.up) {
                                 usePhysicalControls = true;
                             }
-                            if (keyDown.down) {
+                            if (inputDown.down) {
                                 usePhysicalControls = true;
                             }
                         }

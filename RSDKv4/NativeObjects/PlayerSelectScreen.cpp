@@ -60,8 +60,8 @@ void PlayerSelectScreen_Main(void *objPtr)
             if (self->timer > 0.5) {
                 self->timer      = 0.0;
                 self->state      = PLAYERSELECTSCREEN_STATE_MAIN;
-                keyPress.start = false;
-                keyPress.A     = false;
+                inputPress.start = false;
+                inputPress.A     = false;
                 self->alpha      = 256;
                 if (usePhysicalControls)
                     self->playerID = SAVESEL_SONIC;
@@ -69,15 +69,15 @@ void PlayerSelectScreen_Main(void *objPtr)
             break;
 
         case PLAYERSELECTSCREEN_STATE_MAIN:
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
             SetRenderMatrix(&self->matrixTemp);
             if (usePhysicalControls) {
                 if (touches > 0) {
                     usePhysicalControls = false;
                 }
                 else {
-                    if (keyPress.left) {
+                    if (inputPress.left) {
                         if (saveGame->knuxUnlocked) {
                             PlaySfxByName("Menu Move", false);
                             if (--self->playerID < 0)
@@ -89,7 +89,7 @@ void PlayerSelectScreen_Main(void *objPtr)
                                 self->playerID = SAVESEL_TAILS;
                         }
                     }
-                    else if (keyPress.right) {
+                    else if (inputPress.right) {
                         if (saveGame->knuxUnlocked) {
                             PlaySfxByName("Menu Move", false);
 
@@ -106,12 +106,12 @@ void PlayerSelectScreen_Main(void *objPtr)
                             self->playerID = SAVESEL_SONIC;
                         }
                     }
-                    if (keyPress.start || keyPress.A) {
+                    if (inputPress.start || inputPress.A) {
                         PlaySfxByName("Menu Select", false);
                         StopMusic(true);
                         self->state = PLAYERSELECTSCREEN_STATE_ACTION;
                     }
-                    else if (keyPress.B) {
+                    else if (inputPress.B) {
                         PlaySfxByName("Menu Back", false);
                         self->backPressed = false;
                         self->state       = PLAYERSELECTSCREEN_STATE_EXIT;
@@ -153,7 +153,7 @@ void PlayerSelectScreen_Main(void *objPtr)
                         }
                     }
                     self->backPressed = CheckTouchRect(128.0, -92.0, 32.0, 32.0) >= 0;
-                    if (self->state == PLAYERSELECTSCREEN_STATE_MAIN && (keyDown.left || keyDown.right)) {
+                    if (self->state == PLAYERSELECTSCREEN_STATE_MAIN && (inputDown.left || inputDown.right)) {
                         usePhysicalControls = true;
                         self->playerID      = SAVESEL_SONIC;
                     }
@@ -164,12 +164,12 @@ void PlayerSelectScreen_Main(void *objPtr)
                         StopMusic(true);
                         self->state = PLAYERSELECTSCREEN_STATE_ACTION;
                     }
-                    if (self->backPressed || keyPress.B) {
+                    if (self->backPressed || inputPress.B) {
                         PlaySfxByName("Menu Back", false);
                         self->backPressed = false;
                         self->state       = PLAYERSELECTSCREEN_STATE_EXIT;
                     }
-                    else if (self->state == PLAYERSELECTSCREEN_STATE_MAIN && (keyDown.left || keyDown.right)) {
+                    else if (self->state == PLAYERSELECTSCREEN_STATE_MAIN && (inputDown.left || inputDown.right)) {
                         usePhysicalControls = true;
                         self->playerID      = SAVESEL_SONIC;
                     }
@@ -177,7 +177,7 @@ void PlayerSelectScreen_Main(void *objPtr)
             }
             break;
 
-        case PLAYERSELECTSCREEN_STATE_ACTION:
+        case 2:
             SetRenderMatrix(&self->matrixTemp);
 
             self->timer2 += Engine.deltaTime;

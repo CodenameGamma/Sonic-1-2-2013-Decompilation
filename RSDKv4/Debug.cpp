@@ -75,8 +75,8 @@ void ProcessStageSelect()
 {
     ClearScreen(0xF0);
 
-    CheckKeyDown(&keyDown);
-    CheckKeyPress(&keyPress);
+    CheckKeyDown(&inputDown);
+    CheckKeyPress(&inputPress);
 
 #if defined RETRO_USING_MOUSE || defined RETRO_USING_TOUCH
     DrawSprite(32, 0x42, 16, 16, 78, 240, textMenuSurfaceNo);
@@ -84,7 +84,7 @@ void ProcessStageSelect()
     DrawSprite(SCREEN_XSIZE - 32, SCREEN_YSIZE - 32, 16, 16, 112, 240, textMenuSurfaceNo);
 #endif
 
-    if (!keyDown.start && !keyDown.up && !keyDown.down) {
+    if (!inputDown.start && !inputDown.up && !inputDown.down) {
         int tFlags = touchFlags;
         touchFlags = 0;
 
@@ -93,13 +93,13 @@ void ProcessStageSelect()
                 if (touchX[t] < SCREEN_CENTERX) {
                     if (touchY[t] >= SCREEN_CENTERY) {
                         if (!(tFlags & 2))
-                            keyPress.down = true;
+                            inputPress.down = true;
                         else
                             touchFlags |= 1 << 1;
                     }
                     else {
                         if (!(tFlags & 1))
-                            keyPress.up = true;
+                            inputPress.up = true;
                         else
                             touchFlags |= 1 << 0;
                     }
@@ -107,13 +107,13 @@ void ProcessStageSelect()
                 else if (touchX[t] > SCREEN_CENTERX) {
                     if (touchY[t] > SCREEN_CENTERY) {
                         if (!(tFlags & 4))
-                            keyPress.start = true;
+                            inputPress.start = true;
                         else
                             touchFlags |= 1 << 2;
                     }
                     else {
                         if (!(tFlags & 8))
-                            keyPress.B = true;
+                            inputPress.B = true;
                         else
                             touchFlags |= 1 << 3;
                     }
@@ -121,19 +121,19 @@ void ProcessStageSelect()
             }
         }
 
-        touchFlags |= (int)keyPress.up << 0;
-        touchFlags |= (int)keyPress.down << 1;
-        touchFlags |= (int)keyPress.start << 2;
-        touchFlags |= (int)keyPress.B << 3;
+        touchFlags |= (int)inputPress.up << 0;
+        touchFlags |= (int)inputPress.down << 1;
+        touchFlags |= (int)inputPress.start << 2;
+        touchFlags |= (int)inputPress.B << 3;
     }
 
     switch (stageMode) {
         case DEVMENU_MAIN: // Main Menu
         {
-            if (keyPress.down)
+            if (inputPress.down)
                 gameMenu[0].selection2 += 2;
 
-            if (keyPress.up)
+            if (inputPress.up)
                 gameMenu[0].selection2 -= 2;
 
             int count = 15;
@@ -147,7 +147,7 @@ void ProcessStageSelect()
                 gameMenu[0].selection2 = count;
 
             DrawTextMenu(&gameMenu[0], SCREEN_CENTERX, 72);
-            if (keyPress.start || keyPress.A) {
+            if (inputPress.start || inputPress.A) {
                 if (gameMenu[0].selection2 == 9) {
                     ClearGraphicsData();
                     ClearAnimationData();
@@ -201,7 +201,7 @@ void ProcessStageSelect()
 #endif
                 }
             }
-            else if (keyPress.B) {
+            else if (inputPress.B) {
                 ClearGraphicsData();
                 ClearAnimationData();
                 activeStageList   = 0;
@@ -213,9 +213,9 @@ void ProcessStageSelect()
         }
         case DEVMENU_PLAYERSEL: // Selecting Player
         {
-            if (keyPress.down)
+            if (inputPress.down)
                 ++gameMenu[1].selection1;
-            if (keyPress.up)
+            if (inputPress.up)
                 --gameMenu[1].selection1;
             if (gameMenu[1].selection1 == gameMenu[1].rowCount)
                 gameMenu[1].selection1 = 0;
@@ -225,20 +225,20 @@ void ProcessStageSelect()
 
             DrawTextMenu(&gameMenu[0], SCREEN_CENTERX - 4, 72);
             DrawTextMenu(&gameMenu[1], SCREEN_CENTERX - 40, 96);
-            if (keyPress.start || keyPress.A) {
+            if (inputPress.start || inputPress.A) {
                 playerListPos = gameMenu[1].selection1;
                 SetTextMenu(DEVMENU_STAGELISTSEL);
             }
-            else if (keyPress.B) {
+            else if (inputPress.B) {
                 SetTextMenu(DEVMENU_MAIN);
             }
             break;
         }
         case DEVMENU_STAGELISTSEL: // Selecting Category
         {
-            if (keyPress.down)
+            if (inputPress.down)
                 gameMenu[0].selection2 += 2;
-            if (keyPress.up)
+            if (inputPress.up)
                 gameMenu[0].selection2 -= 2;
 
             if (gameMenu[0].selection2 > 9)
@@ -273,7 +273,7 @@ void ProcessStageSelect()
                 default: break;
             }
 
-            if ((keyPress.start || keyPress.A) && nextMenu) {
+            if ((inputPress.start || inputPress.A) && nextMenu) {
                 SetupTextMenu(&gameMenu[0], 0);
                 AddTextMenuEntry(&gameMenu[0], "SELECT A STAGE");
                 SetupTextMenu(&gameMenu[1], 0);
@@ -291,7 +291,7 @@ void ProcessStageSelect()
                 gameMenu[1].timer          = 0;
                 stageMode                  = DEVMENU_STAGESEL;
             }
-            else if (keyPress.B) {
+            else if (inputPress.B) {
                 SetupTextMenu(&gameMenu[0], 0);
                 AddTextMenuEntry(&gameMenu[0], "SELECT A PLAYER");
                 SetupTextMenu(&gameMenu[1], 0);
@@ -308,32 +308,32 @@ void ProcessStageSelect()
         }
         case DEVMENU_STAGESEL: // Selecting Stage
         {
-            if (keyDown.down) {
+            if (inputDown.down) {
                 gameMenu[1].timer += 1;
                 if (gameMenu[1].timer > 8) {
                     gameMenu[1].timer = 0;
-                    keyPress.down   = true;
+                    inputPress.down   = true;
                 }
             }
             else {
-                if (keyDown.up) {
+                if (inputDown.up) {
                     gameMenu[1].timer -= 1;
                     if (gameMenu[1].timer < -8) {
                         gameMenu[1].timer = 0;
-                        keyPress.up     = true;
+                        inputPress.up     = true;
                     }
                 }
                 else {
                     gameMenu[1].timer = 0;
                 }
             }
-            if (keyPress.down) {
+            if (inputPress.down) {
                 gameMenu[1].selection1++;
                 if (gameMenu[1].selection1 - gameMenu[1].visibleRowOffset >= gameMenu[1].visibleRowCount) {
                     gameMenu[1].visibleRowOffset += 1;
                 }
             }
-            if (keyPress.up) {
+            if (inputPress.up) {
                 gameMenu[1].selection1--;
                 if (gameMenu[1].selection1 - gameMenu[1].visibleRowOffset < 0) {
                     gameMenu[1].visibleRowOffset -= 1;
@@ -350,8 +350,8 @@ void ProcessStageSelect()
 
             DrawTextMenu(&gameMenu[0], SCREEN_CENTERX - 4, 40);
             DrawTextMenu(&gameMenu[1], SCREEN_CENTERX + 100, 64);
-            if (keyPress.start || keyPress.A) {
-                debugMode         = keyDown.A;
+            if (inputPress.start || inputPress.A) {
+                debugMode         = inputDown.A;
                 stageMode         = STAGEMODE_LOAD;
                 Engine.gameMode   = ENGINE_MAINGAME;
                 stageListPosition = gameMenu[1].selection1;
@@ -359,7 +359,7 @@ void ProcessStageSelect()
                 SetGlobalVariableByName("lampPostID", 0); // For S1
                 SetGlobalVariableByName("starPostID", 0); // For S2
             }
-            else if (keyPress.B) {
+            else if (inputPress.B) {
                 SetTextMenu(DEVMENU_STAGELISTSEL);
             }
             break;
@@ -367,10 +367,10 @@ void ProcessStageSelect()
         case DEVMENU_SCRIPTERROR: // Script Error
         {
             DrawTextMenu(&gameMenu[0], SCREEN_CENTERX, 72);
-            if (keyPress.start || keyPress.A) {
+            if (inputPress.start || inputPress.A) {
                 SetTextMenu(DEVMENU_MAIN);
             }
-            else if (keyPress.B) {
+            else if (inputPress.B) {
                 ClearGraphicsData();
                 ClearAnimationData();
                 activeStageList   = 0;
@@ -378,7 +378,7 @@ void ProcessStageSelect()
                 Engine.gameMode   = ENGINE_MAINGAME;
                 stageListPosition = 0;
             }
-            else if (keyPress.C) {
+            else if (inputPress.C) {
                 ClearGraphicsData();
                 ClearAnimationData();
                 stageMode       = STAGEMODE_LOAD;
@@ -390,19 +390,19 @@ void ProcessStageSelect()
         case DEVMENU_MODMENU: // Mod Menu
         {
             int preOption = gameMenu[1].selection1;
-            if (keyDown.down) {
+            if (inputDown.down) {
                 gameMenu[1].timer++;
                 if (gameMenu[1].timer > 8) {
                     gameMenu[1].timer = 0;
-                    keyPress.down   = true;
+                    inputPress.down   = true;
                 }
             }
             else {
-                if (keyDown.up) {
+                if (inputDown.up) {
                     gameMenu[1].timer--;
                     if (gameMenu[1].timer < -8) {
                         gameMenu[1].timer = 0;
-                        keyPress.up     = true;
+                        inputPress.up     = true;
                     }
                 }
                 else {
@@ -410,14 +410,14 @@ void ProcessStageSelect()
                 }
             }
 
-            if (keyPress.down) {
+            if (inputPress.down) {
                 gameMenu[1].selection1++;
                 if (gameMenu[1].selection1 - gameMenu[1].visibleRowOffset >= gameMenu[1].visibleRowCount) {
                     gameMenu[1].visibleRowOffset++;
                 }
             }
 
-            if (keyPress.up) {
+            if (inputPress.up) {
                 gameMenu[1].selection1--;
                 if (gameMenu[1].selection1 - gameMenu[1].visibleRowOffset < 0 && gameMenu[1].visibleRowOffset > 0) {
                     gameMenu[1].visibleRowOffset--;
@@ -425,7 +425,7 @@ void ProcessStageSelect()
             }
 
             if (gameMenu[1].selection1 >= gameMenu[1].rowCount) {
-                if (keyDown.C) {
+                if (inputDown.C) {
                     gameMenu[1].selection1--;
                     gameMenu[1].visibleRowOffset--;
                 }
@@ -436,7 +436,7 @@ void ProcessStageSelect()
             }
 
             if (gameMenu[1].selection1 < 0) {
-                if (keyDown.C) {
+                if (inputDown.C) {
                     gameMenu[1].selection1++;
                 }
                 else {
@@ -447,14 +447,14 @@ void ProcessStageSelect()
             gameMenu[1].selection2 = gameMenu[1].selection1; // its a bug fix LOL
 
             char buffer[0x100];
-            if (gameMenu[1].selection1 < modList.size() && (keyPress.A || keyPress.start || keyPress.left || keyPress.right)) {
+            if (gameMenu[1].selection1 < modList.size() && (inputPress.A || inputPress.start || inputPress.left || inputPress.right)) {
                 modList[gameMenu[1].selection1].active ^= 1;
                 StrCopy(buffer, modList[gameMenu[1].selection1].name.c_str());
                 StrAdd(buffer, ": ");
                 StrAdd(buffer, (modList[gameMenu[1].selection1].active ? "  Active" : "Inactive"));
                 EditTextMenuEntry(&gameMenu[1], buffer, gameMenu[1].selection1);
             }
-            else if (keyDown.C && gameMenu[1].selection1 != preOption) {
+            else if (inputDown.C && gameMenu[1].selection1 != preOption) {
                 int visibleOffset  = gameMenu[1].visibleRowOffset;
                 int option         = gameMenu[1].selection1;
                 ModInfo swap       = modList[preOption];
@@ -464,7 +464,7 @@ void ProcessStageSelect()
                 gameMenu[1].selection1       = option;
                 gameMenu[1].visibleRowOffset = visibleOffset;
             }
-            else if (keyPress.B) {
+            else if (inputPress.B) {
                 RefreshEngine();
 
                 if (Engine.modMenuCalled) {

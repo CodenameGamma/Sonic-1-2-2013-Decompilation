@@ -214,9 +214,9 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
-            if (pauseEnabled && keyPress.start) {
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_NORMAL_STEP;
                 PauseSound();
             }
@@ -266,10 +266,10 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
 
-            if (pauseEnabled && keyPress.start) {
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_PAUSED_STEP;
                 PauseSound();
             }
@@ -304,8 +304,8 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
 
             // Update
             ProcessFrozenObjects();
@@ -337,9 +337,9 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
-            if (pauseEnabled && keyPress.start) {
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_2P_STEP;
                 PauseSound();
             }
@@ -392,11 +392,11 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
 
-            if (keyPress.C) {
-                keyPress.C = false;
+            if (inputPress.C) {
+                inputPress.C = false;
 
                 if (timeEnabled) {
                     if (++frameCounter == 60) {
@@ -434,7 +434,7 @@ void ProcessStage(void)
                 ProcessParallaxAutoScroll();
             }
 
-            if (pauseEnabled && keyPress.start) {
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_NORMAL;
                 ResumeSound();
             }
@@ -447,10 +447,10 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
 
-            if (keyPress.C) {
+            if (inputPress.C) {
 #if RETRO_HARDWARE_RENDER
                 gfxIndexSize        = 0;
                 gfxVertexSize       = 0;
@@ -458,7 +458,7 @@ void ProcessStage(void)
                 gfxVertexSizeOpaque = 0;
 #endif
 
-                keyPress.C = false;
+                inputPress.C = false;
                 ProcessPausedObjects();
                 DrawObjectList(0);
                 DrawObjectList(1);
@@ -473,7 +473,7 @@ void ProcessStage(void)
 #endif
             }
 
-            if (pauseEnabled && keyPress.start) {
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_PAUSED;
                 ResumeSound();
             }
@@ -486,11 +486,11 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
 
-            if (keyPress.C) {
-                keyPress.C = false;
+            if (inputPress.C) {
+                inputPress.C = false;
 
                 // Update
                 ProcessFrozenObjects();
@@ -513,7 +513,7 @@ void ProcessStage(void)
 
                 DrawStageGFX();
             }
-            if (pauseEnabled && keyPress.start) {
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_FROZEN;
                 ResumeSound();
             }
@@ -527,10 +527,10 @@ void ProcessStage(void)
 
             lastXSize = -1;
             lastYSize = -1;
-            CheckKeyDown(&keyDown);
-            CheckKeyPress(&keyPress);
-            if (keyPress.C) {
-                keyPress.C = false;
+            CheckKeyDown(&inputDown);
+            CheckKeyPress(&inputPress);
+            if (inputPress.C) {
+                inputPress.C = false;
 
                 if (timeEnabled) {
                     if (++frameCounter == 60) {
@@ -570,7 +570,7 @@ void ProcessStage(void)
                 ProcessParallaxAutoScroll();
             }
 
-            if (pauseEnabled && keyPress.start) {
+            if (pauseEnabled && inputPress.start) {
                 stageMode = STAGEMODE_2P;
                 ResumeSound();
             }

@@ -100,9 +100,11 @@ int InitRenderDevice()
 #endif
 
     SCREEN_CENTERX = SCREEN_XSIZE / 2;
-    Engine.window  = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_XSIZE * Engine.windowScale,
-                                     SCREEN_YSIZE * Engine.windowScale, SDL_WINDOW_ALLOW_HIGHDPI | flags);
-
+    if (windowCreated == false) {
+        Engine.window = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_XSIZE * Engine.windowScale,
+                                         SCREEN_YSIZE * Engine.windowScale, SDL_WINDOW_ALLOW_HIGHDPI | flags);
+        windowCreated = true;
+    }
     if (!Engine.window) {
         PrintLog("ERROR: failed to create window!");
         return 0;
@@ -515,12 +517,10 @@ void FlipScreen()
 
 #endif
 }
-void ReleaseRenderDevice(bool refresh)
+void ReleaseRenderDevice()
 {
-    if (!refresh) {
-        ClearMeshData();
-        ClearTextures(false);
-    }
+    ClearMeshData();
+    ClearTextures(false);
 
 #if !RETRO_USE_ORIGINAL_CODE
 #if RETRO_SOFTWARE_RENDER
@@ -604,11 +604,7 @@ void SetScreenDimensions(int width, int height)
     int displayWidth        = aspect * SCREEN_YSIZE;
     // if (val > displaySettings.maxWidth)
     //    val = displaySettings.maxWidth;
-#if !RETRO_USE_ORIGINAL_CODE
-    SetScreenSize(displayWidth, (displayWidth + 9) & -0x8);
-#else
     SetScreenSize(displayWidth, (displayWidth + 9) & -0x10);
-#endif
 
     int width2 = 0;
     int wBuf   = GFX_LINESIZE - 1;
@@ -750,11 +746,7 @@ void SetupViewport()
     glViewport(displaySettings.offsetX, 0, displaySettings.width, displaySettings.height);
 #endif
     int displayWidth = aspect * SCREEN_YSIZE;
-#if !RETRO_USE_ORIGINAL_CODE
-    SetScreenSize(displayWidth, (displayWidth + 9) & -0x8);
-#else
     SetScreenSize(displayWidth, (displayWidth + 9) & -0x10);
-#endif
 
     Engine.useHighResAssets = displaySettings.height > (SCREEN_YSIZE * 2);
 
@@ -2533,8 +2525,8 @@ void Draw3DFloorLayer(int layerID)
     int layerZPos          = layer->zpos;
     int sinValue           = sinM7LookupTable[layer->angle];
     int cosValue           = cosM7LookupTable[layer->angle];
-    byte *gfxLineBufferPtr = &gfxLineBuffer[(SCREEN_YSIZE / 2) + 12];
-    ushort *frameBufferPtr = &Engine.frameBuffer[((SCREEN_YSIZE / 2) + 12) * GFX_LINESIZE];
+    byte *gfxLineBufferPtr = &gfxLineBuffer[((SCREEN_YSIZE / 2) + 12) * GFX_LINESIZE];
+    ushort *frameBufferPtr = &Engine.frameBuffer[132 * GFX_LINESIZE];
     int layerXPos          = layer->xpos >> 4;
     int ZBuffer            = layerZPos >> 4;
     for (int i = 4; i < 112; ++i) {
@@ -2588,7 +2580,7 @@ void Draw3DSkyLayer(int layerID)
     ushort *frameBufferPtr = &Engine.frameBuffer[((SCREEN_YSIZE / 2) + 12) * GFX_LINESIZE];
     ushort *bufferPtr      = Engine.frameBuffer2x;
     if (!drawStageGFXHQ)
-        bufferPtr = &Engine.frameBuffer[((SCREEN_YSIZE / 2) + 12) * GFX_LINESIZE];
+        bufferPtr = &Engine.frameBuffer[(SCREEN_YSIZE / 2) + 12];
     byte *gfxLineBufferPtr = &gfxLineBuffer[((SCREEN_YSIZE / 2) + 12)];
     int layerXPos          = layer->xpos >> 4;
     int layerZPos          = layer->zpos >> 4;

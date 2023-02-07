@@ -28,7 +28,7 @@ struct ScriptFunction {
 struct ObjectScript {
     int frameCount;
     int spriteSheetID;
-    ScriptPtr eventUpdate;
+    ScriptPtr eventMain;
     ScriptPtr eventDraw;
     ScriptPtr eventStartup;
     int frameListOffset;
@@ -65,6 +65,8 @@ extern int foreachStackPos;
 extern ScriptEngine scriptEng;
 extern char scriptText[0x4000];
 
+
+
 bool ConvertStringToInteger(const char *text, int *value);
 
 #if RETRO_USE_COMPILER
@@ -92,7 +94,7 @@ void ParseScriptFile(char *scriptName, int scriptID);
 #endif
 void LoadBytecode(int stageListID, int scriptID);
 
-void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptEvent);
+void ProcessScript(int scriptCodePtr, int jumpTablePtr, byte scriptSub);
 
 void ClearScriptData(void);
 

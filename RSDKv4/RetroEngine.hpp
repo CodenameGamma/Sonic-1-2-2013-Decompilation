@@ -416,11 +416,8 @@ public:
 
     char gameWindowText[0x40];
     char gameDescriptionText[0x100];
-    const char *gameVersion  = "1.3.1";
+    const char *gameVersion  = "1.3.0";
     const char *gamePlatform = nullptr;
-
-    int gameTypeID       = 0;
-    const char *releaseType = "USE_STANDALONE";
 
 #if RETRO_RENDERTYPE == RETRO_SW_RENDER
     const char *gameRenderType = "SW_RENDERING";

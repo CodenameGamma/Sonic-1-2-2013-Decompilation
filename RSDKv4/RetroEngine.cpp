@@ -12,7 +12,7 @@ bool engineDebugMode = false;
 RetroEngine Engine = RetroEngine();
 
 #if !RETRO_USE_ORIGINAL_CODE
-inline int GetLowerRate(int intendRate, int targetRate)
+inline int getLowerRate(int intendRate, int targetRate)
 {
     int result   = 0;
     int valStore = 0;
@@ -29,7 +29,7 @@ inline int GetLowerRate(int intendRate, int targetRate)
 }
 #endif
 
-bool ProcessEvents()
+bool processEvents()
 {
 #if !RETRO_USE_ORIGINAL_CODE
 #if RETRO_USING_SDL1 || RETRO_USING_SDL2
@@ -439,7 +439,7 @@ void RetroEngine::Init()
 
 #if !RETRO_USE_ORIGINAL_CODE
     // Calculate Skip frame
-    int lower        = GetLowerRate(targetRefreshRate, refreshRate);
+    int lower        = getLowerRate(targetRefreshRate, refreshRate);
     renderFrameIndex = targetRefreshRate / lower;
     skipFrameIndex   = refreshRate / lower;
 
@@ -479,46 +479,6 @@ void RetroEngine::Init()
         Engine.gameMode = ENGINE_MAINGAME;
     else
         Engine.gameMode = ENGINE_WAIT;
-
-    // "error message"
-    if (!running) {
-        char rootDir[0x80];
-        char pathBuffer[0x80];
-
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(rootDir, "%s/", getResourcesPath());
-        else
-            sprintf(rootDir, "%s", "");
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(rootDir, "%s/", gamePath);
-#else
-        sprintf(rootDir, "%s", "");
-#endif
-        sprintf(pathBuffer, "%s%s", rootDir, "usage.txt");
-
-        FileIO *f;
-        if ((f = fOpen(pathBuffer, "w")) == NULL) {
-            PrintLog("ERROR: Couldn't open file '%s' for writing!", "usage.txt");
-            return;
-        }
-
-        char textBuf[0x100];
-        sprintf(textBuf, "RETRO ENGINE v4 USAGE:\n");
-        fWrite(textBuf, 1, strlen(textBuf), f);
-
-        sprintf(textBuf, "- Open the asset directory '%s' in a file browser\n", !rootDir[0] ? "./" : rootDir);
-        fWrite(textBuf, 1, strlen(textBuf), f);
-
-        sprintf(textBuf, "- Place a data pack named '%s' in the asset directory\n", Engine.dataFile[0]);
-        fWrite(textBuf, 1, strlen(textBuf), f);
-
-        sprintf(textBuf, "- OR extract a data pack and place the \"Data\" & \"Bytecode\" folders in the asset directory\n");
-        fWrite(textBuf, 1, strlen(textBuf), f);
-
-        fClose(f);
-    }
-
 #endif
 }
 
@@ -541,7 +501,7 @@ void RetroEngine::Run()
 
         Engine.deltaTime = 1.0 / 60;
 #endif
-        running = ProcessEvents();
+        running = processEvents();
 
         // Focus Checks
         if (!(disableFocusPause & 2)) {
@@ -619,7 +579,7 @@ void RetroEngine::Run()
 }
 
 #if RETRO_USE_MOD_LOADER
-const tinyxml2::XMLElement *FirstXMLChildElement(tinyxml2::XMLDocument *doc, const tinyxml2::XMLElement *elementPtr, const char *name)
+const tinyxml2::XMLElement *firstXMLChildElement(tinyxml2::XMLDocument *doc, const tinyxml2::XMLElement *elementPtr, const char *name)
 {
     if (doc) {
         if (!elementPtr)
@@ -630,7 +590,7 @@ const tinyxml2::XMLElement *FirstXMLChildElement(tinyxml2::XMLDocument *doc, con
     return NULL;
 }
 
-const tinyxml2::XMLElement *NextXMLSiblingElement(tinyxml2::XMLDocument *doc, const tinyxml2::XMLElement *elementPtr, const char *name)
+const tinyxml2::XMLElement *nextXMLSiblingElement(tinyxml2::XMLDocument *doc, const tinyxml2::XMLElement *elementPtr, const char *name)
 {
     if (doc) {
         if (!elementPtr)
@@ -641,11 +601,11 @@ const tinyxml2::XMLElement *NextXMLSiblingElement(tinyxml2::XMLDocument *doc, co
     return NULL;
 }
 
-const tinyxml2::XMLAttribute *FindXMLAttribute(const tinyxml2::XMLElement *elementPtr, const char *name) { return elementPtr->FindAttribute(name); }
-const char *GetXMLAttributeName(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->Name(); }
-int GetXMLAttributeValueInt(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->IntValue(); }
-bool GetXMLAttributeValueBool(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->BoolValue(); }
-const char *GetXMLAttributeValueString(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->Value(); }
+const tinyxml2::XMLAttribute *findXMLAttribute(const tinyxml2::XMLElement *elementPtr, const char *name) { return elementPtr->FindAttribute(name); }
+const char *getXMLAttributeName(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->Name(); }
+int getXMLAttributeValueInt(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->IntValue(); }
+bool getXMLAttributeValueBool(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->BoolValue(); }
+const char *getXMLAttributeValueString(const tinyxml2::XMLAttribute *attributePtr) { return attributePtr->Value(); }
 
 void RetroEngine::LoadXMLVariables()
 {
@@ -655,7 +615,7 @@ void RetroEngine::LoadXMLVariables()
             continue;
 
         SetActiveMod(m);
-        if (LoadFile("Data/Game/game.xml", &info)) {
+        if (LoadFile("Data/Game/Game.xml", &info)) {
             tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
 
             char *xmlData = new char[info.fileSize + 1];
@@ -665,27 +625,27 @@ void RetroEngine::LoadXMLVariables()
             bool success = doc->Parse(xmlData) == tinyxml2::XML_SUCCESS;
 
             if (success) {
-                const tinyxml2::XMLElement *gameElement      = FirstXMLChildElement(doc, nullptr, "game");
-                const tinyxml2::XMLElement *variablesElement = FirstXMLChildElement(doc, gameElement, "variables");
+                const tinyxml2::XMLElement *gameElement      = firstXMLChildElement(doc, nullptr, "game");
+                const tinyxml2::XMLElement *variablesElement = firstXMLChildElement(doc, gameElement, "variables");
                 if (variablesElement) {
-                    const tinyxml2::XMLElement *varElement = FirstXMLChildElement(doc, variablesElement, "variable");
+                    const tinyxml2::XMLElement *varElement = firstXMLChildElement(doc, variablesElement, "variable");
                     if (varElement) {
                         do {
-                            const tinyxml2::XMLAttribute *nameAttr = FindXMLAttribute(varElement, "name");
+                            const tinyxml2::XMLAttribute *nameAttr = findXMLAttribute(varElement, "name");
                             const char *varName                    = "unknownVariable";
                             if (nameAttr)
-                                varName = GetXMLAttributeValueString(nameAttr);
+                                varName = getXMLAttributeValueString(nameAttr);
 
-                            const tinyxml2::XMLAttribute *valAttr = FindXMLAttribute(varElement, "value");
+                            const tinyxml2::XMLAttribute *valAttr = findXMLAttribute(varElement, "value");
                             int varValue                          = 0;
                             if (valAttr)
-                                varValue = GetXMLAttributeValueInt(valAttr);
+                                varValue = getXMLAttributeValueInt(valAttr);
 
                             StrCopy(globalVariableNames[globalVariablesCount], varName);
                             globalVariables[globalVariablesCount] = varValue;
                             globalVariablesCount++;
 
-                        } while ((varElement = NextXMLSiblingElement(doc, varElement, "variable")));
+                        } while ((varElement = nextXMLSiblingElement(doc, varElement, "variable")));
                     }
                 }
             }
@@ -706,7 +666,7 @@ void RetroEngine::LoadXMLPalettes()
             continue;
 
         SetActiveMod(m);
-        if (LoadFile("Data/Game/game.xml", &info)) {
+        if (LoadFile("Data/Game/Game.xml", &info)) {
             tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
 
             char *xmlData = new char[info.fileSize + 1];
@@ -716,40 +676,40 @@ void RetroEngine::LoadXMLPalettes()
             bool success = doc->Parse(xmlData) == tinyxml2::XML_SUCCESS;
 
             if (success) {
-                const tinyxml2::XMLElement *gameElement    = FirstXMLChildElement(doc, nullptr, "game");
-                const tinyxml2::XMLElement *paletteElement = FirstXMLChildElement(doc, gameElement, "palette");
+                const tinyxml2::XMLElement *gameElement    = firstXMLChildElement(doc, nullptr, "game");
+                const tinyxml2::XMLElement *paletteElement = firstXMLChildElement(doc, gameElement, "palette");
                 if (paletteElement) {
-                    const tinyxml2::XMLElement *clrElement = FirstXMLChildElement(doc, paletteElement, "color");
+                    const tinyxml2::XMLElement *clrElement = firstXMLChildElement(doc, paletteElement, "color");
                     if (clrElement) {
                         do {
-                            const tinyxml2::XMLAttribute *bankAttr = FindXMLAttribute(clrElement, "bank");
+                            const tinyxml2::XMLAttribute *bankAttr = findXMLAttribute(clrElement, "bank");
                             int clrBank                            = 0;
                             if (bankAttr)
-                                clrBank = GetXMLAttributeValueInt(bankAttr);
+                                clrBank = getXMLAttributeValueInt(bankAttr);
 
-                            const tinyxml2::XMLAttribute *indAttr = FindXMLAttribute(clrElement, "index");
+                            const tinyxml2::XMLAttribute *indAttr = findXMLAttribute(clrElement, "index");
                             int clrInd                            = 0;
                             if (indAttr)
-                                clrInd = GetXMLAttributeValueInt(indAttr);
+                                clrInd = getXMLAttributeValueInt(indAttr);
 
-                            const tinyxml2::XMLAttribute *rAttr = FindXMLAttribute(clrElement, "r");
+                            const tinyxml2::XMLAttribute *rAttr = findXMLAttribute(clrElement, "r");
                             int clrR                            = 0;
                             if (rAttr)
-                                clrR = GetXMLAttributeValueInt(rAttr);
+                                clrR = getXMLAttributeValueInt(rAttr);
 
-                            const tinyxml2::XMLAttribute *gAttr = FindXMLAttribute(clrElement, "g");
+                            const tinyxml2::XMLAttribute *gAttr = findXMLAttribute(clrElement, "g");
                             int clrG                            = 0;
                             if (gAttr)
-                                clrG = GetXMLAttributeValueInt(gAttr);
+                                clrG = getXMLAttributeValueInt(gAttr);
 
-                            const tinyxml2::XMLAttribute *bAttr = FindXMLAttribute(clrElement, "b");
+                            const tinyxml2::XMLAttribute *bAttr = findXMLAttribute(clrElement, "b");
                             int clrB                            = 0;
                             if (bAttr)
-                                clrB = GetXMLAttributeValueInt(bAttr);
+                                clrB = getXMLAttributeValueInt(bAttr);
 
                             SetPaletteEntry(clrBank, clrInd, clrR, clrG, clrB);
 
-                        } while ((clrElement = NextXMLSiblingElement(doc, clrElement, "color")));
+                        } while ((clrElement = nextXMLSiblingElement(doc, clrElement, "color")));
                     }
                 }
             }
@@ -772,7 +732,7 @@ void RetroEngine::LoadXMLObjects()
             continue;
 
         SetActiveMod(m);
-        if (LoadFile("Data/Game/game.xml", &info)) {
+        if (LoadFile("Data/Game/Game.xml", &info)) {
             tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
 
             char *xmlData = new char[info.fileSize + 1];
@@ -782,30 +742,30 @@ void RetroEngine::LoadXMLObjects()
             bool success = doc->Parse(xmlData) == tinyxml2::XML_SUCCESS;
 
             if (success) {
-                const tinyxml2::XMLElement *gameElement    = FirstXMLChildElement(doc, nullptr, "game");
-                const tinyxml2::XMLElement *objectsElement = FirstXMLChildElement(doc, gameElement, "objects");
+                const tinyxml2::XMLElement *gameElement    = firstXMLChildElement(doc, nullptr, "game");
+                const tinyxml2::XMLElement *objectsElement = firstXMLChildElement(doc, gameElement, "objects");
                 if (objectsElement) {
-                    const tinyxml2::XMLElement *objElement = FirstXMLChildElement(doc, objectsElement, "object");
+                    const tinyxml2::XMLElement *objElement = firstXMLChildElement(doc, objectsElement, "object");
                     if (objElement) {
                         do {
-                            const tinyxml2::XMLAttribute *nameAttr = FindXMLAttribute(objElement, "name");
+                            const tinyxml2::XMLAttribute *nameAttr = findXMLAttribute(objElement, "name");
                             const char *objName                    = "unknownObject";
                             if (nameAttr)
-                                objName = GetXMLAttributeValueString(nameAttr);
+                                objName = getXMLAttributeValueString(nameAttr);
 
-                            const tinyxml2::XMLAttribute *scrAttr = FindXMLAttribute(objElement, "script");
+                            const tinyxml2::XMLAttribute *scrAttr = findXMLAttribute(objElement, "script");
                             const char *objScript                 = "unknownObject.txt";
                             if (scrAttr)
-                                objScript = GetXMLAttributeValueString(scrAttr);
+                                objScript = getXMLAttributeValueString(scrAttr);
 
                             byte flags = 0;
 
                             // forces the object to be loaded, this means the object doesn't have to be and *SHOULD NOT* be in the stage object list
                             // if it is, it'll cause issues!!!!
-                            const tinyxml2::XMLAttribute *loadAttr = FindXMLAttribute(objElement, "forceLoad");
+                            const tinyxml2::XMLAttribute *loadAttr = findXMLAttribute(objElement, "forceLoad");
                             int objForceLoad                       = false;
                             if (loadAttr)
-                                objForceLoad = GetXMLAttributeValueBool(loadAttr);
+                                objForceLoad = getXMLAttributeValueBool(loadAttr);
 
                             flags |= (objForceLoad & 1);
 
@@ -814,12 +774,12 @@ void RetroEngine::LoadXMLObjects()
                             modScriptFlags[modObjCount] = flags;
                             modObjCount++;
 
-                        } while ((objElement = NextXMLSiblingElement(doc, objElement, "object")));
+                        } while ((objElement = nextXMLSiblingElement(doc, objElement, "object")));
                     }
                 }
             }
             else {
-                PrintLog("Failed to parse game.xml File!");
+                PrintLog("Failed to parse Game.xml File!");
             }
 
             delete[] xmlData;
@@ -839,7 +799,7 @@ void RetroEngine::LoadXMLSoundFX()
             continue;
 
         SetActiveMod(m);
-        if (LoadFile("Data/Game/game.xml", &info)) {
+        if (LoadFile("Data/Game/Game.xml", &info)) {
             tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
 
             char *xmlData = new char[info.fileSize + 1];
@@ -849,21 +809,21 @@ void RetroEngine::LoadXMLSoundFX()
             bool success = doc->Parse(xmlData) == tinyxml2::XML_SUCCESS;
 
             if (success) {
-                const tinyxml2::XMLElement *gameElement   = FirstXMLChildElement(doc, nullptr, "game");
-                const tinyxml2::XMLElement *soundsElement = FirstXMLChildElement(doc, gameElement, "sounds");
+                const tinyxml2::XMLElement *gameElement   = firstXMLChildElement(doc, nullptr, "game");
+                const tinyxml2::XMLElement *soundsElement = firstXMLChildElement(doc, gameElement, "sounds");
                 if (soundsElement) {
-                    const tinyxml2::XMLElement *sfxElement = FirstXMLChildElement(doc, soundsElement, "soundfx");
+                    const tinyxml2::XMLElement *sfxElement = firstXMLChildElement(doc, soundsElement, "soundfx");
                     if (sfxElement) {
                         do {
-                            const tinyxml2::XMLAttribute *nameAttr = FindXMLAttribute(sfxElement, "name");
+                            const tinyxml2::XMLAttribute *nameAttr = findXMLAttribute(sfxElement, "name");
                             const char *sfxName                    = "unknownSFX";
                             if (nameAttr)
-                                sfxName = GetXMLAttributeValueString(nameAttr);
+                                sfxName = getXMLAttributeValueString(nameAttr);
 
-                            const tinyxml2::XMLAttribute *valAttr = FindXMLAttribute(sfxElement, "path");
+                            const tinyxml2::XMLAttribute *valAttr = findXMLAttribute(sfxElement, "path");
                             const char *sfxPath                   = "unknownSFX.wav";
                             if (valAttr)
-                                sfxPath = GetXMLAttributeValueString(valAttr);
+                                sfxPath = getXMLAttributeValueString(valAttr);
 
                             SetSfxName(sfxName, globalSFXCount);
 
@@ -873,12 +833,12 @@ void RetroEngine::LoadXMLSoundFX()
                             SetFileInfo(&infoStore);
                             globalSFXCount++;
 
-                        } while ((sfxElement = NextXMLSiblingElement(doc, sfxElement, "soundfx")));
+                        } while ((sfxElement = nextXMLSiblingElement(doc, sfxElement, "soundfx")));
                     }
                 }
             }
             else {
-                PrintLog("Failed to parse game.xml File!");
+                PrintLog("Failed to parse Game.xml File!");
             }
 
             delete[] xmlData;
@@ -898,7 +858,7 @@ void RetroEngine::LoadXMLPlayers(TextMenu *menu)
             continue;
 
         SetActiveMod(m);
-        if (LoadFile("Data/Game/game.xml", &info)) {
+        if (LoadFile("Data/Game/Game.xml", &info)) {
             tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
 
             char *xmlData = new char[info.fileSize + 1];
@@ -908,28 +868,28 @@ void RetroEngine::LoadXMLPlayers(TextMenu *menu)
             bool success = doc->Parse(xmlData) == tinyxml2::XML_SUCCESS;
 
             if (success) {
-                const tinyxml2::XMLElement *gameElement    = FirstXMLChildElement(doc, nullptr, "game");
-                const tinyxml2::XMLElement *playersElement = FirstXMLChildElement(doc, gameElement, "players");
+                const tinyxml2::XMLElement *gameElement    = firstXMLChildElement(doc, nullptr, "game");
+                const tinyxml2::XMLElement *playersElement = firstXMLChildElement(doc, gameElement, "players");
                 if (playersElement) {
-                    const tinyxml2::XMLElement *plrElement = FirstXMLChildElement(doc, playersElement, "player");
+                    const tinyxml2::XMLElement *plrElement = firstXMLChildElement(doc, playersElement, "player");
                     if (plrElement) {
                         do {
-                            const tinyxml2::XMLAttribute *nameAttr = FindXMLAttribute(plrElement, "name");
+                            const tinyxml2::XMLAttribute *nameAttr = findXMLAttribute(plrElement, "name");
                             const char *plrName                    = "unknownPlayer";
                             if (nameAttr)
-                                plrName = GetXMLAttributeValueString(nameAttr);
+                                plrName = getXMLAttributeValueString(nameAttr);
 
                             if (menu)
                                 AddTextMenuEntry(menu, plrName);
                             else
                                 StrCopy(playerNames[playerCount++], plrName);
 
-                        } while ((plrElement = NextXMLSiblingElement(doc, plrElement, "player")));
+                        } while ((plrElement = nextXMLSiblingElement(doc, plrElement, "player")));
                     }
                 }
             }
             else {
-                PrintLog("Failed to parse game.xml File!");
+                PrintLog("Failed to parse Game.xml File!");
             }
 
             delete[] xmlData;
@@ -948,7 +908,7 @@ void RetroEngine::LoadXMLStages(TextMenu *menu, int listNo)
             continue;
 
         SetActiveMod(m);
-        if (LoadFile("Data/Game/game.xml", &info)) {
+        if (LoadFile("Data/Game/Game.xml", &info)) {
             tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
 
             char *xmlData = new char[info.fileSize + 1];
@@ -958,34 +918,34 @@ void RetroEngine::LoadXMLStages(TextMenu *menu, int listNo)
             bool success = doc->Parse(xmlData) == tinyxml2::XML_SUCCESS;
 
             if (success) {
-                const tinyxml2::XMLElement *gameElement = FirstXMLChildElement(doc, nullptr, "game");
+                const tinyxml2::XMLElement *gameElement = firstXMLChildElement(doc, nullptr, "game");
                 const char *elementNames[]              = { "presentationStages", "regularStages", "bonusStages", "specialStages" };
 
                 for (int l = 0; l < STAGELIST_MAX; ++l) {
-                    const tinyxml2::XMLElement *listElement = FirstXMLChildElement(doc, gameElement, elementNames[l]);
+                    const tinyxml2::XMLElement *listElement = firstXMLChildElement(doc, gameElement, elementNames[l]);
                     if (listElement) {
-                        const tinyxml2::XMLElement *stgElement = FirstXMLChildElement(doc, listElement, "stage");
+                        const tinyxml2::XMLElement *stgElement = firstXMLChildElement(doc, listElement, "stage");
                         if (stgElement) {
                             do {
-                                const tinyxml2::XMLAttribute *nameAttr = FindXMLAttribute(stgElement, "name");
+                                const tinyxml2::XMLAttribute *nameAttr = findXMLAttribute(stgElement, "name");
                                 const char *stgName                    = "unknownStage";
                                 if (nameAttr)
-                                    stgName = GetXMLAttributeValueString(nameAttr);
+                                    stgName = getXMLAttributeValueString(nameAttr);
 
-                                const tinyxml2::XMLAttribute *folderAttr = FindXMLAttribute(stgElement, "folder");
+                                const tinyxml2::XMLAttribute *folderAttr = findXMLAttribute(stgElement, "folder");
                                 const char *stgFolder                    = "unknownStageFolder";
                                 if (nameAttr)
-                                    stgFolder = GetXMLAttributeValueString(folderAttr);
+                                    stgFolder = getXMLAttributeValueString(folderAttr);
 
-                                const tinyxml2::XMLAttribute *idAttr = FindXMLAttribute(stgElement, "id");
+                                const tinyxml2::XMLAttribute *idAttr = findXMLAttribute(stgElement, "id");
                                 const char *stgID                    = "unknownStageID";
                                 if (idAttr)
-                                    stgID = GetXMLAttributeValueString(idAttr);
+                                    stgID = getXMLAttributeValueString(idAttr);
 
-                                const tinyxml2::XMLAttribute *highlightAttr = FindXMLAttribute(stgElement, "highlight");
+                                const tinyxml2::XMLAttribute *highlightAttr = findXMLAttribute(stgElement, "highlight");
                                 bool stgHighlighted                         = false;
                                 if (highlightAttr)
-                                    stgHighlighted = GetXMLAttributeValueBool(highlightAttr);
+                                    stgHighlighted = getXMLAttributeValueBool(highlightAttr);
 
                                 if (menu) {
                                     if (listNo == 3 || listNo == 4) {
@@ -1008,13 +968,13 @@ void RetroEngine::LoadXMLStages(TextMenu *menu, int listNo)
                                     stageListCount[l]++;
                                 }
 
-                            } while ((stgElement = NextXMLSiblingElement(doc, stgElement, "stage")));
+                            } while ((stgElement = nextXMLSiblingElement(doc, stgElement, "stage")));
                         }
                     }
                 }
             }
             else {
-                PrintLog("Failed to parse game.xml File!");
+                PrintLog("Failed to parse Game.xml File!");
             }
 
             delete[] xmlData;
@@ -1205,15 +1165,11 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
     AddNativeFunction("SetScreenWidth", SetScreenWidth);
     AddNativeFunction("GetWindowScale", GetWindowScale);
     AddNativeFunction("SetWindowScale", SetWindowScale);
-    AddNativeFunction("GetWindowScaleMode", GetWindowScaleMode);
-    AddNativeFunction("SetWindowScaleMode", SetWindowScaleMode);
     AddNativeFunction("GetWindowFullScreen", GetWindowFullScreen);
     AddNativeFunction("SetWindowFullScreen", SetWindowFullScreen);
     AddNativeFunction("GetWindowBorderless", GetWindowBorderless);
     AddNativeFunction("SetWindowBorderless", SetWindowBorderless);
-    AddNativeFunction("GetWindowVSync", GetWindowVSync);
-    AddNativeFunction("SetWindowVSync", SetWindowVSync);
-    AddNativeFunction("ApplyWindowChanges", ApplyWindowChanges); // Refresh window after changing window options
+    // AddNativeFunction("ApplyWindowChanges", ApplyWindowChanges); //todo: this prolly tbh
     AddNativeFunction("GetModCount", GetModCount);
     AddNativeFunction("GetModName", GetModName);
     AddNativeFunction("GetModDescription", GetModDescription);
@@ -1221,7 +1177,6 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
     AddNativeFunction("GetModVersion", GetModVersion);
     AddNativeFunction("GetModActive", GetModActive);
     AddNativeFunction("SetModActive", SetModActive);
-    AddNativeFunction("MoveMod", MoveMod);
     AddNativeFunction("RefreshEngine", RefreshEngine); // Reload engine after changing mod status
 #endif
 
