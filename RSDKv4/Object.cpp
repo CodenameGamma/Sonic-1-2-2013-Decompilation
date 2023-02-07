@@ -347,21 +347,21 @@ void SetObjectTypeName(const char *objectName, int objectID)
     PrintLog("Set Object (%d) name to: %s", objectID, objectName);
 }
 
-void ProcessObjectControl(Entity *entity)
+void ProcessObjectControl(Entity *player)
 {
-    if (!entity->controlMode) {
-        entity->up   = inputDown.up;
-        entity->down = inputDown.down;
+    if (!player->controlMode) {
+        player->up   = inputDown.up;
+        player->down = inputDown.down;
         if (!inputDown.left || !inputDown.right) {
-            entity->left  = inputDown.left;
-            entity->right = inputDown.right;
+            player->left  = inputDown.left;
+            player->right = inputDown.right;
         }
         else {
-            entity->left  = false;
-            entity->right = false;
+            player->left  = false;
+            player->right = false;
         }
-        entity->jumpHold  = inputDown.C || inputDown.B || inputDown.A;
-        entity->jumpPress = inputPress.C || inputPress.B || inputPress.A;
+        player->jumpHold  = inputDown.C || inputDown.B || inputDown.A;
+        player->jumpPress = inputPress.C || inputPress.B || inputPress.A;
     }
 }
 
