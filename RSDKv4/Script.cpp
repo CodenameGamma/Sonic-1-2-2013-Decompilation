@@ -61,6 +61,10 @@ struct FunctionInfo {
 #if RETRO_USE_COMPILER
 const char variableNames[][0x20] = {
     // Internal Script Values
+    "CCIsInGame",
+    "CCRing",
+    "CCPlayerChange",
+    "CCStoredPlayer",
     "temp0",
     "temp1",
     "temp2",
@@ -624,6 +628,11 @@ enum ScriptVarTypes { SCRIPTVAR_VAR = 1, SCRIPTVAR_INTCONST = 2, SCRIPTVAR_STRCO
 enum ScriptVarArrTypes { VARARR_NONE = 0, VARARR_ARRAY = 1, VARARR_ENTNOPLUS1 = 2, VARARR_ENTNOMINUS1 = 3 };
 
 enum ScrVar {
+
+    VAR_CCIsInGame,
+    VAR_CCRing,
+    VAR_CCPlayerChange,
+    VAR_CCStoredPlayer,
     VAR_TEMP0,
     VAR_TEMP1,
     VAR_TEMP2,
@@ -3350,6 +3359,11 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptEvent)
                 // Variables
                 switch (scriptCode[scriptCodePtr++]) {
                     default: break;
+                    case VAR_CCIsInGame: scriptEng.operands[i] = scriptEng.CCIsInGame; break;
+                    case VAR_CCRing: scriptEng.operands[i] = scriptEng.CCRing; break;
+                    case VAR_CCPlayerChange: scriptEng.operands[i] = scriptEng.CCPlayerChange; break;
+                    case VAR_CCStoredPlayer: scriptEng.operands[i] = scriptEng.CCStoredPlayer; break;
+
                     case VAR_TEMP0: scriptEng.operands[i] = scriptEng.temp[0]; break;
                     case VAR_TEMP1: scriptEng.operands[i] = scriptEng.temp[1]; break;
                     case VAR_TEMP2: scriptEng.operands[i] = scriptEng.temp[2]; break;
@@ -5619,6 +5633,10 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptEvent)
                 // Variables
                 switch (scriptCode[scriptCodePtr++]) {
                     default: break;
+                    case VAR_CCIsInGame: scriptEng.CCIsInGame = scriptEng.operands[i]; break;
+                    case VAR_CCRing: scriptEng.CCRing = scriptEng.operands[i]; break;
+                    case VAR_CCPlayerChange: scriptEng.CCPlayerChange = scriptEng.operands[i]; break;
+                    case VAR_CCStoredPlayer: scriptEng.CCStoredPlayer = scriptEng.operands[i]; break;
                     case VAR_TEMP0: scriptEng.temp[0] = scriptEng.operands[i]; break;
                     case VAR_TEMP1: scriptEng.temp[1] = scriptEng.operands[i]; break;
                     case VAR_TEMP2: scriptEng.temp[2] = scriptEng.operands[i]; break;

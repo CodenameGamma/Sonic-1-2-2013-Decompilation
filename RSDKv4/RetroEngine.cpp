@@ -8,6 +8,14 @@ bool engineDebugMode = false;
 #if RETRO_PLATFORM == RETRO_ANDROID
 #include <unistd.h>
 #endif
+#include <ccpp.h>
+#include <windows.h>
+
+
+
+
+
+bool Ring(int Type);
 
 RetroEngine Engine = RetroEngine();
 
@@ -28,7 +36,19 @@ inline int GetLowerRate(int intendRate, int targetRate)
     return result;
 }
 #endif
+bool Ring(int Type)
+{
+    printf("Tried Ring ------ CCIsInGame = %d, Ring = %d \n", scriptEng.CCIsInGame, scriptEng.CCRing);
+    // Return if Game is running.
+    if (scriptEng.CCIsInGame == 1 && (scriptEng.CCRing == 255 || scriptEng.CCRing == 0)) {
 
+        scriptEng.CCRing = Type;
+
+        printf("Did Ring ------ CCIsInGame = %d, Ring = %d \n", scriptEng.CCIsInGame, scriptEng.CCRing);
+        return true;
+    }
+    return false;
+}
 bool ProcessEvents()
 {
 #if !RETRO_USE_ORIGINAL_CODE
@@ -276,6 +296,13 @@ bool ProcessEvents()
 
 void RetroEngine::Init()
 {
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+
+
+
+
+
     CalculateTrigAngles();
     GenerateBlendLookupTable();
 
@@ -521,9 +548,63 @@ void RetroEngine::Init()
 
 #endif
 }
+int main2();
 
-void RetroEngine::Run()
+bool RanOnce = false;
+ccpp crowdcontrol;
+void JumpStartCrowdControl()
 {
+    if (RanOnce == false) {
+        main2();
+    }
+}
+int main2()
+{
+    PrintLog("Registering Funcs\n");
+    crowdcontrol.register_trigger("ring", []() {
+        // do my_cool_effect
+        if (Ring(1))
+            return ccpp::status_t::success;
+
+        else
+            return ccpp::status_t::retry;
+    });
+   
+    crowdcontrol.register_trigger("shield", []() {
+        // do my_cool_effect
+        if (Ring(2))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("speed", []() {
+        // do my_cool_effect
+        if (Ring(2))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("invin", []() {
+        // do my_cool_effect
+        if (Ring(3))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+   
+
+    // crowdcontrol.initialize();
+    return false;
+}
+    void RetroEngine::Run()
+{
+      
+      
+
+
+    JumpStartCrowdControl();
+    crowdcontrol.initialize(true);
+
     Engine.deltaTime = 0.0f;
 
     unsigned long long targetFreq = SDL_GetPerformanceFrequency() / Engine.refreshRate;
@@ -543,6 +624,15 @@ void RetroEngine::Run()
 #endif
         running = ProcessEvents();
 
+        if (stageMode == STAGEMODE_NORMAL && timeEnabled == 1) {
+            scriptEng.CCIsInGame = 1;
+        }
+        if (stageMode == STAGEMODE_PAUSED) {
+            scriptEng.CCIsInGame = 0;
+        }
+        if (cameraEnabled == 0) {
+            scriptEng.CCIsInGame = 0;
+        }
         // Focus Checks
         if (!(disableFocusPause & 2)) {
             if (!Engine.hasFocus) {

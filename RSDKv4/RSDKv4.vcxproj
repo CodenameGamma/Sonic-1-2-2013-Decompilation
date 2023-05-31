@@ -143,7 +143,7 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies/windows/SDL2/lib/$(PlatformTargetAsMSBuildArchitecture)/;$(SolutionDir)dependencies/windows/libvorbis/win32/VS2010/$(Platform)/Debug/;$(SolutionDir)dependencies/windows/libogg/win32/VS2015/$(Platform)/Debug/;$(SolutionDir)dependencies/windows/glew/lib/Release/$(Platform)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;libogg.lib;libvorbis_static.lib;libvorbisfile_static.lib;Opengl32.lib;glu32.lib;glew32.lib;Shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;libogg.lib;libvorbis_static.lib;libvorbisfile_static.lib;Opengl32.lib;glu32.lib;glew32.lib;Shell32.lib;Advapi32.lib;Ws2_32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(SolutionDir)dependencies\windows\SDL2\lib\$(PlatformTargetAsMSBuildArchitecture)\SDL2.dll" "$(OutDir)"
@@ -199,7 +199,7 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies/windows/SDL2/lib/$(PlatformTargetAsMSBuildArchitecture)/;$(SolutionDir)dependencies/windows/libvorbis/win32/VS2010/$(Platform)/Release/;$(SolutionDir)dependencies/windows/libogg/win32/VS2015/$(Platform)/Release/;$(SolutionDir)dependencies/windows/glew/lib/Release/$(Platform)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;libogg.lib;libvorbis_static.lib;libvorbisfile_static.lib;Opengl32.lib;glu32.lib;glew32.lib;Shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;libogg.lib;libvorbis_static.lib;libvorbisfile_static.lib;Opengl32.lib;glu32.lib;glew32.lib;Shell32.lib;Advapi32.lib;Ws2_32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(SolutionDir)dependencies\windows\SDL2\lib\$(PlatformTargetAsMSBuildArchitecture)\SDL2.dll" "$(OutDir)"
@@ -211,8 +211,10 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\dependencies\all\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="ActiveSocket.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="ccpp.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Drawing.cpp" />
@@ -264,12 +266,14 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
     <ClCompile Include="Networking.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Palette.cpp" />
+    <ClCompile Include="PassiveSocket.cpp" />
     <ClCompile Include="Reader.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RetroEngine.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Scene3D.cpp" />
     <ClCompile Include="Script.cpp" />
+    <ClCompile Include="SimpleSocket.cpp" />
     <ClCompile Include="Userdata.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="String.cpp" />
@@ -277,11 +281,14 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\all\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="ActiveSocket.h" />
     <ClInclude Include="Animation.hpp" />
     <ClInclude Include="Audio.hpp" />
+    <ClInclude Include="ccpp.h" />
     <ClInclude Include="Collision.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="Drawing.hpp" />
+    <ClInclude Include="Host.h" />
     <ClInclude Include="Ini.hpp" />
     <ClInclude Include="ModAPI.hpp" />
     <ClInclude Include="NativeObjects\AboutScreen.hpp" />
@@ -326,10 +333,13 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
     <ClInclude Include="NativeObjects\MultiplayerButton.hpp" />
     <ClInclude Include="NativeObjects\ZoneButton.hpp" />
     <ClInclude Include="Networking.hpp" />
+    <ClInclude Include="nlohmann\json.hpp" />
+    <ClInclude Include="PassiveSocket.h" />
     <ClInclude Include="Reader.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene3D.hpp" />
+    <ClInclude Include="SimpleSocket.h" />
     <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Math.hpp" />
@@ -338,6 +348,7 @@ copy /Y "$(SolutionDir)dependencies\windows\glew\bin\Release\$(Platform)\glew32.
     <ClInclude Include="RetroEngine.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="Script.hpp" />
+    <ClInclude Include="StatTimer.h" />
     <ClInclude Include="String.hpp" />
     <ClInclude Include="Text.hpp" />
     <ClInclude Include="Userdata.hpp" />

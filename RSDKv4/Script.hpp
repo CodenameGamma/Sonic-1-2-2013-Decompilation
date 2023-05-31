@@ -40,6 +40,11 @@ struct ScriptEngine {
     int temp[8];
     int arrayPosition[9];
     int checkResult;
+    int CCIsInGame;
+    int cameraEnabled;
+    int CCStoredPlayer;
+    int CCPlayerChange;
+    int CCRing;
 };
 
 enum ScriptSubs { EVENT_MAIN = 0, EVENT_DRAW = 1, EVENT_SETUP = 2 };

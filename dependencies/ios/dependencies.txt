@@ -7,3 +7,6 @@ Download the source and create an Xcode project to build the library as a framew
 
 libvorbis: https://xiph.org/downloads/ (libvorbis)
 Download the source and create an Xcode project to build the library as a framework, once the framework is built (vorbis.framework), place it in ./
+
+libtheora: https://xiph.org/downloads/ (libtheora)
+Download the source and create an Xcode project to build the library as a framework, once the framework is built (theora.framework), place it in ./

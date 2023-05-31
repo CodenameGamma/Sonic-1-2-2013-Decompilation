@@ -17,6 +17,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
+#include <ccpp.h>
+
+
+
+
+
+static bool ChatRing = false;
 
 // ================
 // STANDARD TYPES

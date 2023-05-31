@@ -1,16 +1,25 @@
 #ifdef __APPLE__
+#include "cocoaHelpers.hpp"
 
 #import <Foundation/Foundation.h>
-#include "cocoaHelpers.hpp"
 
 const char* getResourcesPath(void)
 {
     @autoreleasepool
     {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-        NSString *applicationSupportDirectory = [paths firstObject];
+        NSString* resource_path = [[NSBundle mainBundle] resourcePath];
         
-        return (char*)[applicationSupportDirectory UTF8String];
+        return (char*)[resource_path UTF8String];
+    }
+}
+const char* getDocumentsPath(void)
+{
+    @autoreleasepool
+    {
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString* path = [paths objectAtIndex:0];
+        
+        return (char*)[path UTF8String];
     }
 }
 #endif

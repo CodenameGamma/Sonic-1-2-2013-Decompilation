@@ -6,3 +6,6 @@ Download libogg and unzip it in "./libogg/". Then, copy "config_types.h" from he
 
 libvorbis: https://xiph.org/downloads/ (libvorbis)
 Download libvorbis and unzip it in "./libvorbis/".
+
+libtheora: https://xiph.org/downloads/ (libtheora)
+Download libtheora and unzip it in "./libtheora/".
