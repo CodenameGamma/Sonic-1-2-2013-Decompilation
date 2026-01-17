@@ -45,8 +45,8 @@ std::set<uint64_t> codes;
 
 //----------------------------------------------------------------------
 
-bool debug   = false;
-bool verbose = false;
+bool debug   = true;
+bool verbose = true;
 
 inline uint randomint()
 {

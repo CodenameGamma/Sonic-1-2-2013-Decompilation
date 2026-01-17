@@ -41,10 +41,49 @@ bool Ring(int Type)
     printf("Tried Ring ------ CCIsInGame = %d, Ring = %d \n", scriptEng.CCIsInGame, scriptEng.CCRing);
     // Return if Game is running.
     if (scriptEng.CCIsInGame == 1 && (scriptEng.CCRing == 255 || scriptEng.CCRing == 0)) {
-
+        if (scriptEng.CCRing == Type) {
+            printf("Effect Failed to run, Resetting Hold. \n");
+            scriptEng.CCRing = 255;
+            return false;
+        }
         scriptEng.CCRing = Type;
 
         printf("Did Ring ------ CCIsInGame = %d, Ring = %d \n", scriptEng.CCIsInGame, scriptEng.CCRing);
+        return true;
+    }
+    return false;
+}
+bool DoTheInvert = false;
+int InvertCount  = 0;
+bool InvertC()
+{
+    printf("Tried invert ------ CCIsInGame = %d, DoTheInvert = %B \n", scriptEng.CCIsInGame, DoTheInvert);
+    // Return if Game is running.
+    if (scriptEng.CCIsInGame == 1 && DoTheInvert == false) {
+
+        DoTheInvert = true;
+        InvertCount = 0;
+
+       printf("did invert ------ CCIsInGame = %d, DoTheInvert = %B \n", scriptEng.CCIsInGame, DoTheInvert);
+        return true;
+    }
+    return false;
+}
+bool ChangePlayer(int plr)
+{
+    printf("Tried Player ------ CCIsInGame = %d, CCPlayerChange = %d ,  CCStoredPlayer = %d \n", scriptEng.CCIsInGame, scriptEng.CCPlayerChange,
+           scriptEng.CCStoredPlayer);
+    if (scriptEng.CCStoredPlayer == plr) {
+        printf("Effect Failed to run, Resetting Hold. \n");
+        scriptEng.CCPlayerChange = 255;
+        return false;
+    }
+    if (scriptEng.CCIsInGame == 1 && (scriptEng.CCPlayerChange == 255 || scriptEng.CCPlayerChange == 0) && scriptEng.CCStoredPlayer != plr) {
+        
+        scriptEng.CCPlayerChange = plr;
+
+        printf("Did Player ------ CCIsInGame = %d, CCPlayerChange = %d ,  CCStoredPlayer = %d \n", scriptEng.CCIsInGame, scriptEng.CCPlayerChange,
+               scriptEng.CCStoredPlayer);
         return true;
     }
     return false;
@@ -447,7 +486,7 @@ void RetroEngine::Init()
 #if !RETRO_USE_ORIGINAL_CODE
     gameType = GAME_SONIC2;
 #if RETRO_USE_MOD_LOADER
-    if (strstr(gameWindowText, "Sonic 1") || forceSonic1) {
+    if (strstr(gameWindowText, "Sonic 1 Ver.CrowdControl") || forceSonic1) {
 #else
     if (strstr(gameWindowText, "Sonic 1")) {
 #endif
@@ -570,40 +609,162 @@ int main2()
             return ccpp::status_t::retry;
     });
    
-    crowdcontrol.register_trigger("shield", []() {
+    crowdcontrol.register_trigger("shieldBlue", []() {
         // do my_cool_effect
         if (Ring(2))
             return ccpp::status_t::success;
         else
             return ccpp::status_t::retry;
     });
-    crowdcontrol.register_trigger("speed", []() {
-        // do my_cool_effect
-        if (Ring(2))
-            return ccpp::status_t::success;
-        else
-            return ccpp::status_t::retry;
-    });
-    crowdcontrol.register_trigger("invin", []() {
+    crowdcontrol.register_trigger("shieldFire", []() {
         // do my_cool_effect
         if (Ring(3))
             return ccpp::status_t::success;
         else
             return ccpp::status_t::retry;
     });
-   
+    crowdcontrol.register_trigger("shieldThunder", []() {
+        // do my_cool_effect
+        if (Ring(4))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("shieldBubble", []() {
+        // do my_cool_effect
+        if (Ring(5))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("speed", []() {
+        // do my_cool_effect
+        if (Ring(6))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("ETog", []() {
+        // do my_cool_effect
+        if (Ring(7))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("CChangeSonic", []() {
+        // do my_cool_effect
+        if (ChangePlayer(1))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("CChangeKnux", []() {
+        // do my_cool_effect
+        if (ChangePlayer(3))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+
+       crowdcontrol.register_trigger("CChangeTails", []() {
+        // do my_cool_effect
+        if (ChangePlayer(2))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+    crowdcontrol.register_trigger("Invin", []() {
+        // do my_cool_effect
+        if (Ring(11))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+       crowdcontrol.register_trigger("Hurt", []() {
+           // do my_cool_effect
+           if (Ring(12))
+               return ccpp::status_t::success;
+           else
+               return ccpp::status_t::retry;
+       });
+    crowdcontrol.register_trigger("Slap", []() {
+        // do my_cool_effect
+        if (Ring(13))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+       crowdcontrol.register_trigger("Shove", []() {
+           // do my_cool_effect
+           if (Ring(14))
+               return ccpp::status_t::success;
+           else
+               return ccpp::status_t::retry;
+       });
+    crowdcontrol.register_trigger("reverse", []() {
+        // do my_cool_effect
+        if (Ring(15))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+       crowdcontrol.register_trigger("moto", []() {
+           // do my_cool_effect
+           if (Ring(16))
+               return ccpp::status_t::success;
+           else
+               return ccpp::status_t::retry;
+       });
+    crowdcontrol.register_trigger("chemball", []() {
+        // do my_cool_effect
+        if (Ring(18))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+       crowdcontrol.register_trigger("bumper", []() {
+           // do my_cool_effect
+           if (Ring(19))
+               return ccpp::status_t::success;
+           else
+               return ccpp::status_t::retry;
+       });
+    crowdcontrol.register_trigger("asteron", []() {
+        // do my_cool_effect
+        if (Ring(17))
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
+        crowdcontrol.register_trigger("invert", []() {
+        // do my_cool_effect
+        if (InvertC())
+            return ccpp::status_t::success;
+        else
+            return ccpp::status_t::retry;
+    });
 
     // crowdcontrol.initialize();
     return false;
 }
+
     void RetroEngine::Run()
 {
-      
-      
-
 
     JumpStartCrowdControl();
-    crowdcontrol.initialize(true);
+    if (crowdcontrol.initialize(false) == false) {
+        bool IsRunningCheck = false;
+        do {
+            if (crowdcontrol.initialize(false) == false) {
+                IsRunningCheck = false;
+                printf("Couldn't Connect to Crowd Control Session, Retrying \n");
+            }
+            else {
+                IsRunningCheck = true;
+                printf("Connection Established! \n");
+            }
+        } while (IsRunningCheck == false);
+    };
 
     Engine.deltaTime = 0.0f;
 
@@ -612,6 +773,13 @@ int main2()
     unsigned long long prevTicks  = 0;
 
     while (running) {
+        crowdcontrol.update();
+        if (DoTheInvert) {
+            InvertCount++;
+            if (InvertCount >= 900) { //15frames
+                DoTheInvert = false;
+            }
+        }
 #if !RETRO_USE_ORIGINAL_CODE
         if (!vsync) {
             curTicks = SDL_GetPerformanceCounter();
@@ -1123,7 +1291,7 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
     byte fileBuffer  = 0;
     byte fileBuffer2 = 0;
     char strBuffer[0x40];
-    StrCopy(gameWindowText, "Retro-Engine"); // this is the default window name
+    StrCopy(gameWindowText, "Retro-Engine Ver.CrowdControl"); // this is the default window name
 
     globalVariablesCount = 0;
 #if RETRO_USE_MOD_LOADER
@@ -1249,7 +1417,7 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
         LoadXMLObjects();
         LoadXMLPlayers(NULL);
         LoadXMLStages(NULL, 0);
-
+        SetGlobalVariableByName("Engine.CrowdControl", true);
         SetGlobalVariableByName("options.devMenuFlag", false);
         if (Engine.devMenu)
             SetGlobalVariableByName("options.devMenuFlag", true);

@@ -66,7 +66,7 @@ extern int jumpTableOffset;
 extern int jumpTableStackPos;
 extern int functionStackPos;
 extern int foreachStackPos;
-
+extern bool DoTheInvert;
 extern ScriptEngine scriptEng;
 extern char scriptText[0x4000];
 

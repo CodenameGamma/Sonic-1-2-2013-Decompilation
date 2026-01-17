@@ -406,6 +406,10 @@ public:
 
     bool hasFocus  = true;
     int focusState = 0;
+
+    bool DoTheInvert = false;
+    int InvertCount = 0;
+
 #endif
 
     void Init();
